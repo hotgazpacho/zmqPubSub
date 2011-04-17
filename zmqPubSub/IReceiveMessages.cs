@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace zmqPubSub
 {
     public interface IReceiveMessages
     {
-        void ListenForMessages(ISubject<object> messages);
+        void ListenForMessages(IObserver<object> messageObserver);
         void StopListeningForMessages();
         bool IsListening { get; }
     }

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 using System.Text;
 using Newtonsoft.Json;
@@ -13,7 +13,7 @@ namespace zmqPubSub
     public class ZmqMessageReceiver : BackgroundWorker, IReceiveMessages
     {
         Context _messagingContext;
-        ISubject<object> _messages;
+        IObserver<object> _messageObserver;
 
         public string ListenAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
@@ -54,18 +54,18 @@ namespace zmqPubSub
 
         protected override void OnProgressChanged(ProgressChangedEventArgs e)
         {
-            if(_messages != null)
-                _messages.OnNext(e.UserState);
+            if(_messageObserver != null)
+                _messageObserver.OnNext(e.UserState);
         }
 
         protected override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            _messages = null;
+            _messageObserver = null;
         }
 
-        public void ListenForMessages(ISubject<object> messages)
+        public void ListenForMessages(IObserver<object> messageObserver)
         {
-            _messages = messages;
+            _messageObserver = messageObserver;
             RunWorkerAsync();
         }
 
