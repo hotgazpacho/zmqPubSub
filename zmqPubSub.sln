@@ -3,16 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zmqPubSub", "zmqPubSub\zmqPubSub.csproj", "{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zmqPubSub.Server", "zmqPubSub.Server\zmqPubSub.Server.csproj", "{678A2CA9-9E34-44B7-B7F0-895784E7D784}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Debug|x86.ActiveCfg = Debug|x86
+		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Debug|x86.Build.0 = Debug|x86
+		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Release|x86.ActiveCfg = Release|x86
+		{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}.Release|x86.Build.0 = Release|x86
+		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Debug|x86.ActiveCfg = Debug|x86
+		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Debug|x86.Build.0 = Debug|x86
+		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Release|x86.ActiveCfg = Release|x86
+		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
