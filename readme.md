@@ -14,9 +14,9 @@ zmqPubSub is licensed under the MIT License
 Requirements
 ------------
 
-Visual Studio 2010
-.NET 4.0
-NuGet (either as a VS extension or command line)
+* Visual Studio 2010
+* .NET 4.0
+* NuGet (either as a VS extension or command line)
 
 ### A note on NuGet
 
