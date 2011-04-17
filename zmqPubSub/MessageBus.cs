@@ -13,6 +13,7 @@ namespace zmqPubSub
         readonly ISubject<object> _messages;
         readonly IReceiveMessages _messageReceiver;
         readonly ISendMessages _messageSender;
+        IDisposable _unsubscribe;
 
         public MessageBus(IReceiveMessages messageReceiver, ISendMessages messageSender)
         {
@@ -26,13 +27,14 @@ namespace zmqPubSub
         public void Start()
         {
             if(!IsListening)
-                _messageReceiver.ListenForMessages(_messages);
+                _unsubscribe = _messageReceiver.Subscribe(_messages);
         }
 
         public void Stop()
         {
-            if (IsListening)
-                _messageReceiver.StopListeningForMessages();
+            if (IsListening && _unsubscribe != null)
+                _unsubscribe.Dispose();
+            _unsubscribe = null;
         }
 
         public void Publish<TMessage>(TMessage message)

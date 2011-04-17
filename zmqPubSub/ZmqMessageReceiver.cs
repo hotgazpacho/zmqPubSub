@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Disposables;
 using System.Text;
 using Newtonsoft.Json;
 using ZMQ;
@@ -63,15 +64,11 @@ namespace zmqPubSub
             _messageObserver = null;
         }
 
-        public void ListenForMessages(IObserver<object> messageObserver)
+        public IDisposable Subscribe(IObserver<object> observer)
         {
-            _messageObserver = messageObserver;
+            _messageObserver = observer;
             RunWorkerAsync();
-        }
-
-        public void StopListeningForMessages()
-        {
-            CancelAsync();
+            return Disposable.Create(() => CancelAsync());
         }
 
         public bool IsListening

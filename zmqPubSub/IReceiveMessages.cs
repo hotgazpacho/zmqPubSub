@@ -2,10 +2,8 @@
 
 namespace zmqPubSub
 {
-    public interface IReceiveMessages
+    public interface IReceiveMessages : IObservable<object>
     {
-        void ListenForMessages(IObserver<object> messageObserver);
-        void StopListeningForMessages();
         bool IsListening { get; }
     }
 }
