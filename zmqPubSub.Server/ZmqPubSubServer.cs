@@ -29,6 +29,10 @@ namespace zmqPubSub.Server
                 Console.WriteLine(string.Format("-- Listening for messages on {0}", ListenAddress));
                 Console.WriteLine(string.Format("-- Publishing messages on {0}", PublishAddress));
                 messageBus.Start();
+                while (messageBus.IsListening)
+                {
+                    continue;
+                }
             }
             Console.WriteLine("Zmq Pub/Sub Server Shutting down.");
         }
