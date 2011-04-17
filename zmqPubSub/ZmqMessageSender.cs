@@ -10,35 +10,41 @@ namespace zmqPubSub
     /// A BackgroundWorker for sending messages
     /// on a zmq PUB Socket
     /// </summary>
-    public class ZmqPublishingWorker : BackgroundWorker
+    public class ZmqMessageSender : BackgroundWorker, ISendMessages
     {
-        Context MessagingContext { get; set; }
+        Context _messagingContext;
+
         public string PublishAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
 
-        protected ZmqPublishingWorker()
+        protected ZmqMessageSender()
         {
             WorkerSupportsCancellation = false;
             WorkerReportsProgress = false;
         }
 
-        public ZmqPublishingWorker(Context messagingContext, string publishAddress, Encoding messageEncoding)
+        public ZmqMessageSender(Context messagingContext, string publishAddress, Encoding messageEncoding)
         {
-            MessagingContext = messagingContext;
+            _messagingContext = messagingContext;
             PublishAddress = publishAddress;
             MessageEncoding = messageEncoding;
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            if (e.Argument == null) throw new ArgumentNullException("Cannot publish null message.");
+            SendMessage(e.Argument);
+        }
 
-            var message = JsonConvert.SerializeObject(e.Argument);
+        public void SendMessage(object message)
+        {
+            if (message == null) throw new ArgumentNullException("Cannot publish null message.");
 
-            using (var outgoing = MessagingContext.Socket(SocketType.PUB))
+            var serializedMessage = JsonConvert.SerializeObject(message);
+
+            using (var outgoing = _messagingContext.Socket(SocketType.PUB))
             {
                 outgoing.Connect(PublishAddress);
-                outgoing.Send(message, MessageEncoding);
+                outgoing.Send(serializedMessage, MessageEncoding);
             }
         }
     }

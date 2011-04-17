@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using Newtonsoft.Json;
@@ -10,31 +10,30 @@ namespace zmqPubSub
     /// A BackgroundWorker that listens in a loop for messages 
     /// coming in on a zmq SUB Socket  
     /// </summary>
-    public class ZmqSubscriptionWorker : BackgroundWorker
+    public class ZmqMessageReceiver : BackgroundWorker, IReceiveMessages
     {
-        Context MessagingContext { get; set; }
+        Context _messagingContext;
+        ISubject<object> _messages;
+
         public string ListenAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
 
-        protected ZmqSubscriptionWorker()
+        protected ZmqMessageReceiver()
         {
             WorkerSupportsCancellation = true;
             WorkerReportsProgress = true;
         }
 
-        public ZmqSubscriptionWorker(Context messagingContext, string listenAddress, Encoding messageEncoding) : this()
+        public ZmqMessageReceiver(Context messagingContext, string listenAddress, Encoding messageEncoding) : this()
         {
-            MessagingContext = messagingContext;
+            _messagingContext = messagingContext;
             ListenAddress = listenAddress;
             MessageEncoding = messageEncoding;
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            var context = e.Argument as Context;
-            if (context == null) throw new ArgumentException("ZMQ Context required as the value for the Argument property of the DoWorkEventArgs", "e");
-
-            using (var incoming = context.Socket(SocketType.SUB))
+            using (var incoming = _messagingContext.Socket(SocketType.SUB))
             {
                 incoming.Subscribe("", MessageEncoding);
                 incoming.Connect(ListenAddress);
@@ -49,7 +48,35 @@ namespace zmqPubSub
                 }
 
                 incoming.Unsubscribe("", MessageEncoding);
+                e.Cancel = true;
             }
+        }
+
+        protected override void OnProgressChanged(ProgressChangedEventArgs e)
+        {
+            if(_messages != null)
+                _messages.OnNext(e.UserState);
+        }
+
+        protected override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
+        {
+            _messages = null;
+        }
+
+        public void ListenForMessages(ISubject<object> messages)
+        {
+            _messages = messages;
+            RunWorkerAsync();
+        }
+
+        public void StopListeningForMessages()
+        {
+            CancelAsync();
+        }
+
+        public bool IsListening
+        {
+            get { return IsBusy; }
         }
     }
 }
