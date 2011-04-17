@@ -10,6 +10,8 @@ namespace zmqPubSub.Server
         public string ListenAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
 
+        IMessageBus _messageBus;
+
         public ZmqPubSubServer(string publishAddress, string listenAddress, Encoding messageEncoding)
         {
             PublishAddress = publishAddress;
@@ -24,17 +26,22 @@ namespace zmqPubSub.Server
             {
                 var receiver = new ZmqMessageReceiver(context, ListenAddress, MessageEncoding);
                 var sender = new ZmqMessageSender(context, PublishAddress, MessageEncoding);
-                var messageBus = new MessageBus(receiver, sender);
+                _messageBus = new MessageBus(receiver, sender);
                 Console.WriteLine(string.Format("- Messages will be encoded as {0}", MessageEncoding.EncodingName));
                 Console.WriteLine(string.Format("-- Listening for messages on {0}", ListenAddress));
                 Console.WriteLine(string.Format("-- Publishing messages on {0}", PublishAddress));
-                messageBus.Start();
-                while (messageBus.IsListening)
+                _messageBus.Start();
+                while (_messageBus.IsListening)
                 {
                     continue;
                 }
             }
+        }
+
+        public void Stop()
+        {
             Console.WriteLine("Zmq Pub/Sub Server Shutting down.");
+            _messageBus.Stop();
         }
     }
 }
