@@ -2,4 +2,3 @@ bin/
 obj/
 *.suo
 *.user
-packages
