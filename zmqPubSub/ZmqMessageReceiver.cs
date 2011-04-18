@@ -13,7 +13,7 @@ namespace zmqPubSub
     /// </summary>
     public class ZmqMessageReceiver : BackgroundWorker, IReceiveMessages
     {
-        Context _messagingContext;
+        readonly Context _messagingContext;
         IObserver<object> _messageObserver;
 
         public string ListenAddress { get; private set; }
@@ -68,7 +68,7 @@ namespace zmqPubSub
         {
             _messageObserver = observer;
             RunWorkerAsync();
-            return Disposable.Create(() => CancelAsync());
+            return Disposable.Create(CancelAsync);
         }
 
         public bool IsListening
