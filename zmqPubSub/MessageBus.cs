@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using zmqPubSub.Messages;
 
 namespace zmqPubSub
 {
@@ -26,13 +27,15 @@ namespace zmqPubSub
 
         public void Start()
         {
-            if(!IsListening)
-                _subscription = _messageReceiver.Subscribe(_messages);
+            if (IsListening) return;
+            _subscription = _messageReceiver.Subscribe(_messages);
+            _messageReceiver.OnNext(new StartListeningMessage(DateTime.UtcNow));
         }
 
         public void Stop()
         {
             if (!IsListening || _subscription == null) return;
+            Publish(new StopListeningMessage(DateTime.UtcNow));
             _subscription.Dispose();
             _subscription = null;
         }

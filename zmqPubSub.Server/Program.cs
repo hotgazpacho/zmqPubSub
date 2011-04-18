@@ -1,18 +1,22 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text;
 
 namespace zmqPubSub.Server
 {
     class Program
     {
+        static ZmqPubSubServer _server;
+
         static void Main(string[] args)
         {
-            var server = new ZmqPubSubServer("tcp://127.0.0.1:12345", "tcp://127.0.0.1:54321", Encoding.Unicode); 
+            Console.CancelKeyPress += (s, e) => _server.Stop();
             try
             {
-                server.Start();
-                Console.ReadLine();
-                server.Stop();
+                _server = new ZmqPubSubServer("tcp://127.0.0.1:12345",
+                                                 "tcp://127.0.0.1:54321",
+                                                 Encoding.Unicode);
+                _server.Start();
             }
             catch (Exception e)
             {

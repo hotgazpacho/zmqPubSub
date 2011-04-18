@@ -10,30 +10,21 @@ namespace zmqPubSub
     /// A BackgroundWorker for sending messages
     /// on a zmq PUB Socket
     /// </summary>
-    public class ZmqMessageSender : BackgroundWorker, ISendMessages
+    public class ZmqMessageSender : ISendMessages, IDisposable
     {
         readonly Context _messagingContext;
+        readonly Socket _outgoing;
 
         public string PublishAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
-
-        protected ZmqMessageSender()
-        {
-            WorkerSupportsCancellation = false;
-            WorkerReportsProgress = false;
-        }
 
         public ZmqMessageSender(Context messagingContext, string publishAddress, Encoding messageEncoding)
         {
             _messagingContext = messagingContext;
             PublishAddress = publishAddress;
             MessageEncoding = messageEncoding;
-        }
-
-        protected override void OnDoWork(DoWorkEventArgs e)
-        {
-            base.OnDoWork(e);
-            SendMessage(e.Argument);
+            _outgoing = _messagingContext.Socket(SocketType.PUB);
+            _outgoing.Connect(PublishAddress);
         }
 
         public void SendMessage(object message)
@@ -41,12 +32,13 @@ namespace zmqPubSub
             if (message == null) throw new ArgumentNullException("Cannot publish null message.");
 
             var serializedMessage = JsonConvert.SerializeObject(message);
+            
+            _outgoing.Send(serializedMessage, MessageEncoding);
+        }
 
-            using (var outgoing = _messagingContext.Socket(SocketType.PUB))
-            {
-                outgoing.Connect(PublishAddress);
-                outgoing.Send(serializedMessage, MessageEncoding);
-            }
+        public void Dispose()
+        {
+            _outgoing.Dispose();
         }
     }
 }

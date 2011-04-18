@@ -1,17 +1,17 @@
 using System;
-using System.ComponentModel;
 using System.Disposables;
 using System.Text;
 using Newtonsoft.Json;
 using ZMQ;
+using zmqPubSub.Messages;
+using Exception = System.Exception;
 
 namespace zmqPubSub
 {
     /// <summary>
-    /// A BackgroundWorker that listens in a loop for messages 
-    /// coming in on a zmq SUB Socket  
+    /// Listens in a loop for messages coming in on a zmq SUB Socket  
     /// </summary>
-    public class ZmqMessageReceiver : BackgroundWorker, IReceiveMessages
+    public class ZmqMessageReceiver : IReceiveMessages
     {
         readonly Context _messagingContext;
         IObserver<object> _messageObserver;
@@ -19,64 +19,62 @@ namespace zmqPubSub
         public string ListenAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
 
-        protected ZmqMessageReceiver()
-        {
-            WorkerSupportsCancellation = true;
-            WorkerReportsProgress = true;
-        }
-
-        public ZmqMessageReceiver(Context messagingContext, string listenAddress, Encoding messageEncoding) : this()
+        public ZmqMessageReceiver(Context messagingContext, string listenAddress, Encoding messageEncoding)
         {
             _messagingContext = messagingContext;
             ListenAddress = listenAddress;
             MessageEncoding = messageEncoding;
         }
 
-        protected override void OnDoWork(DoWorkEventArgs e)
+        void Start(StartListeningMessage value)
         {
-            base.OnDoWork(e);
+            _messageObserver.OnNext(value);
+
             using (var incoming = _messagingContext.Socket(SocketType.SUB))
             {
                 incoming.Subscribe("", MessageEncoding);
                 incoming.Connect(ListenAddress);
 
-                while (!CancellationPending)
+                IsListening = true;
+
+                while (IsListening)
                 {
                     var messageBytes = incoming.Recv();
-                    if(messageBytes == null) continue;
+                    if (messageBytes == null) continue;
                     var jsonMessage = MessageEncoding.GetString(messageBytes);
                     var message = JsonConvert.DeserializeObject(jsonMessage);
-                    ReportProgress(0, message);
+                    _messageObserver.OnNext(message);
                 }
-
-                incoming.Unsubscribe("", MessageEncoding);
-                e.Cancel = true;
             }
         }
 
-        protected override void OnProgressChanged(ProgressChangedEventArgs e)
+        void Stop()
         {
-            base.OnProgressChanged(e);
-            if(_messageObserver != null)
-                _messageObserver.OnNext(e.UserState);
-        }
-
-        protected override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
-        {
-            base.OnRunWorkerCompleted(e);
-            _messageObserver = null;
+            IsListening = false;
         }
 
         public IDisposable Subscribe(IObserver<object> observer)
         {
             _messageObserver = observer;
-            RunWorkerAsync();
-            return Disposable.Create(CancelAsync);
+            return Disposable.Create(Stop);
         }
 
-        public bool IsListening
+        public bool IsListening { get; private set; }
+
+        public void OnNext(StartListeningMessage value)
         {
-            get { return IsBusy; }
+            if(!IsListening)
+                Start(value);
+        }
+
+        public void OnError(Exception error)
+        {
+            Stop();
+        }
+
+        public void OnCompleted()
+        {
+            Stop();
         }
     }
 }
