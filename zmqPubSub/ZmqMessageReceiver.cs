@@ -19,8 +19,6 @@ namespace zmqPubSub
         public string ListenAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
 
-        Socket _incoming;
-
         protected ZmqMessageReceiver()
         {
             WorkerSupportsCancellation = true;
@@ -32,26 +30,28 @@ namespace zmqPubSub
             _messagingContext = messagingContext;
             ListenAddress = listenAddress;
             MessageEncoding = messageEncoding;
-            _incoming = _messagingContext.Socket(SocketType.SUB);
-            _incoming.Subscribe("", MessageEncoding);
-            _incoming.Connect(ListenAddress);
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
             base.OnDoWork(e);
-
-            while (!CancellationPending)
+            using (var incoming = _messagingContext.Socket(SocketType.SUB))
             {
-                var messageBytes = _incoming.Recv();
-                if (messageBytes == null) continue;
-                var jsonMessage = MessageEncoding.GetString(messageBytes);
-                var message = JsonConvert.DeserializeObject(jsonMessage);
-                ReportProgress(0, message);
-            }
+                incoming.Subscribe("", MessageEncoding);
+                incoming.Connect(ListenAddress);
 
-            _incoming.Unsubscribe("", MessageEncoding);
-            e.Cancel = true;
+                while (!CancellationPending)
+                {
+                    var messageBytes = incoming.Recv();
+                    if(messageBytes == null) continue;
+                    var jsonMessage = MessageEncoding.GetString(messageBytes);
+                    var message = JsonConvert.DeserializeObject(jsonMessage);
+                    ReportProgress(0, message);
+                }
+
+                incoming.Unsubscribe("", MessageEncoding);
+                e.Cancel = true;
+            }
         }
 
         protected override void OnProgressChanged(ProgressChangedEventArgs e)
@@ -77,12 +77,6 @@ namespace zmqPubSub
         public bool IsListening
         {
             get { return IsBusy; }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _incoming.Dispose();
-            base.Dispose(disposing);
         }
     }
 }
