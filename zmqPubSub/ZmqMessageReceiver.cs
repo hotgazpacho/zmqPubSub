@@ -34,6 +34,7 @@ namespace zmqPubSub
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
+            base.OnDoWork(e);
             using (var incoming = _messagingContext.Socket(SocketType.SUB))
             {
                 incoming.Subscribe("", MessageEncoding);
@@ -55,12 +56,14 @@ namespace zmqPubSub
 
         protected override void OnProgressChanged(ProgressChangedEventArgs e)
         {
+            base.OnProgressChanged(e);
             if(_messageObserver != null)
                 _messageObserver.OnNext(e.UserState);
         }
 
         protected override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
+            base.OnRunWorkerCompleted(e);
             _messageObserver = null;
         }
 

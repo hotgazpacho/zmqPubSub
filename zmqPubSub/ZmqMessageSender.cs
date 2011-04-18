@@ -12,7 +12,7 @@ namespace zmqPubSub
     /// </summary>
     public class ZmqMessageSender : BackgroundWorker, ISendMessages
     {
-        Context _messagingContext;
+        readonly Context _messagingContext;
 
         public string PublishAddress { get; private set; }
         public Encoding MessageEncoding { get; private set; }
@@ -32,6 +32,7 @@ namespace zmqPubSub
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
+            base.OnDoWork(e);
             SendMessage(e.Argument);
         }
 

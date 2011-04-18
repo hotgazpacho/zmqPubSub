@@ -22,19 +22,28 @@ namespace zmqPubSub.Server
         public void Start()
         {
             Console.WriteLine("Starting Zmq Pub/Sub Server...");
+            Console.WriteLine(string.Format("- Messages will be encoded as {0}", MessageEncoding.EncodingName));
             using (var context = new Context(1))
             {
                 var receiver = new ZmqMessageReceiver(context, ListenAddress, MessageEncoding);
+                receiver.DoWork += (s, e) =>
+                    {
+                        Console.WriteLine(string.Format("-- Listening for messages on {0}.", ListenAddress));
+                        Console.WriteLine(string.Format("-- Messages will be published on {0}.", PublishAddress));
+                    };
+                receiver.RunWorkerCompleted += (s, e) =>
+                    {
+                        Console.WriteLine(string.Format("-- Stopped Publishing messages on {0}", PublishAddress));
+                        Console.WriteLine(string.Format("-- Stopped Listening for messages on {0}", ListenAddress));
+                        if(e.Error != null)
+                            Console.WriteLine("ERROR: {0}", e.Error);
+                    };
+
                 var sender = new ZmqMessageSender(context, PublishAddress, MessageEncoding);
+                sender.DoWork += (s, e) => Console.WriteLine(string.Format("-- Publishing message on {0}{1}{2}", PublishAddress, Environment.NewLine, e.Argument));
+
                 _messageBus = new MessageBus(receiver, sender);
-                Console.WriteLine(string.Format("- Messages will be encoded as {0}", MessageEncoding.EncodingName));
-                Console.WriteLine(string.Format("-- Listening for messages on {0}", ListenAddress));
-                Console.WriteLine(string.Format("-- Publishing messages on {0}", PublishAddress));
                 _messageBus.Start();
-                while (_messageBus.IsListening)
-                {
-                    continue;
-                }
             }
         }
 

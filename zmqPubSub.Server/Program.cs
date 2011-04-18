@@ -7,17 +7,17 @@ namespace zmqPubSub.Server
     {
         static void Main(string[] args)
         {
-            var server = new ZmqPubSubServer("tcp://127.0.0.1:12345", "tcp://127.0.0.1:54321", Encoding.Unicode);
-            Console.CancelKeyPress += (sender, e) => server.Stop(); 
+            var server = new ZmqPubSubServer("tcp://127.0.0.1:12345", "tcp://127.0.0.1:54321", Encoding.Unicode); 
             try
             {
                 server.Start();
+                Console.ReadLine();
+                server.Stop();
             }
             catch (Exception e)
             {
                 Console.WriteLine(string.Format("ERROR: {0}", e));
             }
         }
-
     }
 }
