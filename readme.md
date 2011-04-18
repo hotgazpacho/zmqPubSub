@@ -16,9 +16,8 @@ Requirements
 
 * Visual Studio 2010
 * .NET 4.0
-* NuGet (either as a VS extension or command line)
 
-### A note on NuGet
-
-I have opted not to check in the NuGet packages themselves. However, the `packages.config` file is there,
-so you should be able to grab the packages via the NuGet command line tool. David Ebbo has a post about [installing NuGet packages via the command line](http://blog.davidebbo.com/2011/01/installing-nuget-packages-directly-from.html)
+Contributors
+------------
+* [Will Green](https://github.com/hotgazpacho)
+* [Keith Dahlby](https://github.com/dahlbyk)
