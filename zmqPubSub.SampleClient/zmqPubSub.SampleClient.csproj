@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{678A2CA9-9E34-44B7-B7F0-895784E7D784}</ProjectGuid>
+    <ProjectGuid>{DECAC009-160B-4945-8F03-D8376ECEDFA3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>zmqPubSub.Server</RootNamespace>
-    <AssemblyName>zmqPubSub.Server</AssemblyName>
+    <RootNamespace>zmqPubSub.SampleClient</RootNamespace>
+    <AssemblyName>zmqPubSub.SampleClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -39,6 +39,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.CoreEx">
+      <HintPath>..\packages\Rx-Core.1.0.2856.0\lib\Net4\System.CoreEx.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive">
+      <HintPath>..\packages\Rx-Main.1.0.2856.0\lib\Net4\System.Reactive.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,13 +56,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\zmqPubSub\zmqPubSub.csproj">
       <Project>{B748F6B7-D197-4AA1-AC2F-E9262A74CD67}</Project>
       <Name>zmqPubSub</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

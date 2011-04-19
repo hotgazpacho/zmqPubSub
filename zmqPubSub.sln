@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zmqPubSub", "zmqPubSub\zmqP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zmqPubSub.Server", "zmqPubSub.Server\zmqPubSub.Server.csproj", "{678A2CA9-9E34-44B7-B7F0-895784E7D784}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zmqPubSub.SampleClient", "zmqPubSub.SampleClient\zmqPubSub.SampleClient.csproj", "{DECAC009-160B-4945-8F03-D8376ECEDFA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,6 +21,10 @@ Global
 		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Debug|x86.Build.0 = Debug|x86
 		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Release|x86.ActiveCfg = Release|x86
 		{678A2CA9-9E34-44B7-B7F0-895784E7D784}.Release|x86.Build.0 = Release|x86
+		{DECAC009-160B-4945-8F03-D8376ECEDFA3}.Debug|x86.ActiveCfg = Debug|x86
+		{DECAC009-160B-4945-8F03-D8376ECEDFA3}.Debug|x86.Build.0 = Debug|x86
+		{DECAC009-160B-4945-8F03-D8376ECEDFA3}.Release|x86.ActiveCfg = Release|x86
+		{DECAC009-160B-4945-8F03-D8376ECEDFA3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
