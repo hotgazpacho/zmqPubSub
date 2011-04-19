@@ -1,6 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
-using Exception = System.Exception;
 
 namespace zmqPubSub.Server
 {
@@ -14,8 +15,28 @@ namespace zmqPubSub.Server
             var messageEncoding = Encoding.Unicode;
 
             IMessageBus messageBus = new MessageBus(listenAddress, publishAddress, messageEncoding);
-            messageBus.Subscribe<object>(Console.WriteLine);                
-            messageBus.Listen();
+            messageBus.Subscribe<object>(Console.WriteLine);
+            messageBus.GetMessages<StartedListeningMessage>()
+                .Where(m => m.Id == messageBus.GetHashCode())
+                .Subscribe(x => Console.WriteLine("Press ESC to cancel, or any other key to send a message."));
+            var worker = new BackgroundWorker();
+            worker.DoWork += (s, e) => messageBus.Listen();
+            worker.RunWorkerAsync();
+
+            bool loop = true;
+            int i = 1;
+            while (loop)
+            {
+                var key = Console.ReadKey(false);
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    loop = false;
+                    continue;
+                }
+                string message = string.Format("Message {0:d2} from Server", i);
+                messageBus.Publish(message);
+                i++;
+            }
         }
     }
 }
