@@ -72,8 +72,7 @@
     <Compile Include="MessageBusExtensions.cs" />
     <Compile Include="MessageBus.cs" />
     <Compile Include="EncodingExtensions.cs" />
-    <Compile Include="Messages\StartedListeningMessage.cs" />
-    <Compile Include="Messages\StopListeningMessage.cs" />
+    <Compile Include="StartedListeningMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
