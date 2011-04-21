@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using zmqPubSub.Codec;
 
 namespace zmqPubSub.SampleClient
 {
@@ -12,9 +13,9 @@ namespace zmqPubSub.SampleClient
             Console.Title = "zmq Pub Sub Sample Client";
             const string publishAddress = "tcp://127.0.0.1:54321";
             const string listenAddress = "tcp://127.0.0.1:12345";
-            var messageEncoding = Encoding.Unicode;
+            IMessageCodec messageCodec = new JsonMessageCodec(Encoding.Unicode);
 
-            IMessageBus messageBus = new MessageBus(listenAddress, publishAddress, messageEncoding);
+            IMessageBus messageBus = new MessageBus(listenAddress, publishAddress, messageCodec);
             messageBus.Subscribe<object>(Console.WriteLine);
             messageBus.GetMessages<StartedListeningMessage>()
                 .Where(m => m.Id == messageBus.GetHashCode())

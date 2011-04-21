@@ -67,11 +67,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Codec\IMessageCodec.cs" />
+    <Compile Include="Codec\JsonMessageCodec.cs" />
     <Compile Include="IMessageBus.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageBusExtensions.cs" />
     <Compile Include="MessageBus.cs" />
-    <Compile Include="EncodingExtensions.cs" />
     <Compile Include="StartedListeningMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

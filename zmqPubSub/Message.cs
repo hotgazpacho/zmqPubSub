@@ -2,7 +2,7 @@
 
 namespace zmqPubSub
 {
-    internal class Message
+    public class Message
     {
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
         public object Body { get; set; }
